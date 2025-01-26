@@ -1,7 +1,10 @@
-# Mandelbrot Set
+# The One: The Whole is More Than the Sum of the Parts
 
-## Pixel-Based Rendering of Mandelbrot Set
+## Dor:
+"Time, he learned, was not to be measured in hours or minutes, or even seconds. Time was measured in moments. The time keeper didn’t just count the seconds, he understood their significance, how each moment could shape a life, a destiny."
 
-![Mandelbrot_1 Image](Mandelbrot_1.png)
+"the true beauty of time lies in its impermanence"
 
-![Mandelbrot_2 Image](Mandelbrot_2.png)
+Albom, Mitch. The Time Keeper. New York: Hyperion, 2012.
+
+![The One Image](TheOne.png)
