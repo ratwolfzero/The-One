@@ -1,14 +1,29 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def generate_wave(frequency=1, samples=100, amplitude=1):
-    # Generate a simple sine wave
-    x = np.linspace(0, 2 * np.pi, samples)  # Normally represents time
-    y = amplitude * np.sin(frequency * x)
+def generate_wave(custom_function, samples=100, x_range=(-1, 1)):
+    """
+    Generate a wave based on a user-defined function.
+ 
+    Args:
+        custom_function (callable): A function to generate the wave. Takes an array of x values as input.
+        samples (int): Number of points to generate.
+        x_range (tuple): Range of x values (start, end).
+
+    Returns:
+        np.ndarray: Generated wave values.
+    """
+    x = np.linspace(x_range[0], x_range[1], samples)  # Generate x values
+    y = custom_function(x)  # Apply the custom function
     return y
 
 def plot_wave_as_events(wave_data):
-    # Plot a waveform using event indices instead of time
+    """
+    Plot a waveform using event indices and show amplitude changes.
+
+    Args:
+        wave_data (np.ndarray): The wave values to plot.
+    """
     event_indices = range(len(wave_data))  # Use sequential event indices
     amplitude_changes = np.diff(wave_data, prepend=wave_data[0])  # Capture changes
 
@@ -34,9 +49,35 @@ def plot_wave_as_events(wave_data):
     plt.tight_layout()
     plt.show()
 
-# Generate a sine wave
-wave = generate_wave(frequency=1, samples=100, amplitude=1)
+# Example usage with user-defined functions
+if __name__ == "__main__":
+    # Define a function (e.g., sine wave, parabola, cubic, etc.)
+    def sine_wave(x):
+        return np.sin(2 * np.pi * x)
 
-# Plot it without using time
-plot_wave_as_events(wave)
+    def parabola(x):
+        return x**2
 
+    def cubic(x):
+        return x**3
+
+    # Choose a function to experiment with
+    print("Choose a function to experiment:")
+    print("1: Sine Wave")
+    print("2: Parabola")
+    print("3: Cubic")
+    choice = input("Enter your choice (1, 2, or 3): ").strip()
+
+    if choice == "1":
+        chosen_function = sine_wave
+    elif choice == "2":
+        chosen_function = parabola
+    elif choice == "3":
+        chosen_function = cubic
+    else:
+        print("Invalid choice. Defaulting to sine wave.")
+        chosen_function = sine_wave
+
+    # Generate and plot the wave
+    wave = generate_wave(custom_function=chosen_function, samples=100, x_range=(-1, 1))
+    plot_wave_as_events(wave)
