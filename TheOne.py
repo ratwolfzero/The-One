@@ -49,9 +49,11 @@ def plot_wave_as_events(wave_data):
     plt.tight_layout()
     plt.show()
 
-# Example usage with user-defined functions
-if __name__ == "__main__":
-    # Define a function (e.g., sine wave, parabola, cubic, etc.)
+def main():
+    """
+    Main function to coordinate wave generation and plotting.
+    """
+    # Define user-selectable functions
     def sine_wave(x):
         return np.sin(2 * np.pi * x)
 
@@ -61,23 +63,66 @@ if __name__ == "__main__":
     def cubic(x):
         return x**3
 
-    # Choose a function to experiment with
-    print("Choose a function to experiment:")
-    print("1: Sine Wave")
-    print("2: Parabola")
-    print("3: Cubic")
-    choice = input("Enter your choice (1, 2, or 3): ").strip()
+    def cosine_wave(x):
+        return np.cos(2 * np.pi * x)
 
-    if choice == "1":
-        chosen_function = sine_wave
-    elif choice == "2":
-        chosen_function = parabola
-    elif choice == "3":
-        chosen_function = cubic
-    else:
-        print("Invalid choice. Defaulting to sine wave.")
-        chosen_function = sine_wave
+    def tangent_wave(x):
+        return np.tan(2 * np.pi * x) / 10
+
+    def exponential(x):
+        return np.exp(x)
+
+    def logarithmic(x):
+        return np.log(x + 1.1)
+
+    def square_wave(x):
+        return np.sign(np.sin(2 * np.pi * x))
+
+    def sawtooth_wave(x):
+        return 2 * (x - np.floor(x + 0.5))
+
+    def quartic(x):
+        return x**4 - x**2
+
+    def noisy_sine_wave(x):
+        return np.sin(2 * np.pi * x) + 0.2 * np.random.randn(len(x))
+
+    def hybrid_sin_exp(x):
+        return np.sin(2 * np.pi * x) * np.exp(-x)
+
+    def piecewise_function(x):
+        return np.where(x < 0, x**2, np.sin(2 * np.pi * x))
+
+    # Map choices to functions
+    functions = {
+        "1": ("Sine Wave", sine_wave),
+        "2": ("Parabola", parabola),
+        "3": ("Cubic", cubic),
+        "4": ("Cosine Wave", cosine_wave),
+        "5": ("Tangent Wave", tangent_wave),
+        "6": ("Exponential", exponential),
+        "7": ("Logarithmic", logarithmic),
+        "8": ("Square Wave", square_wave),
+        "9": ("Sawtooth Wave", sawtooth_wave),
+        "10": ("Quartic", quartic),
+        "11": ("Noisy Sine Wave", noisy_sine_wave),
+        "12": ("Hybrid Sin-Exp", hybrid_sin_exp),
+        "13": ("Piecewise Function", piecewise_function)
+    }
+
+    # Display options to the user
+    print("Choose a function to experiment:")
+    for key, (name, _) in functions.items():
+        print(f"{key}: {name}")
+
+    # Get user input
+    choice = input("Enter your choice (1-13): ").strip()
+    chosen_function = functions.get(choice, ("Sine Wave", sine_wave))[1]
 
     # Generate and plot the wave
     wave = generate_wave(custom_function=chosen_function, samples=100, x_range=(-1, 1))
     plot_wave_as_events(wave)
+
+if __name__ == "__main__":
+    main()
+
