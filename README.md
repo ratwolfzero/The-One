@@ -8,4 +8,6 @@
 
 Albom, Mitch. The Time Keeper. New York: Hyperion, 2012.
 
-![The One Image](TheOne.png)
+![The One Image](TheOne1.png)
+![The One Image](TheOne2.png)
+![The One Image](TheOne3.png)
