@@ -19,18 +19,32 @@ def generate_wave(custom_function, samples=100, x_range=(-1, 1)):
 
 def plot_wave_as_events(wave_data):
     """
-    Plot a waveform using event indices and show amplitude changes.
+    Plot a waveform three ways: the raw sequence, its local rate of change,
+    and its frequency spectrum.
+
+    The diff panel is LOCAL -- each point is just y[i] - y[i-1], a 2-sample
+    window that's exactly invertible via cumsum, so it carries no information
+    the raw wave didn't already have. The FFT panel is GLOBAL: each frequency
+    bin is a weighted sum over every sample in the signal, so it can't be
+    computed from any subset of the wave. That's the panel that actually
+    earns "the whole is more than the sum of the parts" -- harmonic
+    structure shows up here that's invisible in any local view of the wave.
 
     Args:
         wave_data (np.ndarray): The wave values to plot.
     """
     event_indices = range(len(wave_data))  # Use sequential event indices
-    amplitude_changes = np.diff(wave_data, prepend=wave_data[0])  # Capture changes
+    amplitude_changes = np.diff(wave_data, prepend=wave_data[0])  # Local: 2-sample window
 
-    plt.figure(figsize=(10, 5))
+    # FFT: each bin depends on ALL samples at once -- a genuinely global computation
+    spectrum = np.fft.rfft(wave_data)
+    freqs = np.fft.rfftfreq(len(wave_data), d=1.0)  # cycles per sample
+    magnitude = np.abs(spectrum)
+
+    plt.figure(figsize=(15, 5))
 
     # Plot original wave with event indices
-    plt.subplot(1, 2, 1)
+    plt.subplot(1, 3, 1)
     plt.plot(event_indices, wave_data, label="Amplitude", color="blue")
     plt.title("Waveform as Event Sequence")
     plt.xlabel("Event Index")
@@ -38,12 +52,20 @@ def plot_wave_as_events(wave_data):
     plt.grid(True)
     plt.legend()
 
-    # Plot only state changes (emergent feature)
-    plt.subplot(1, 2, 2)
+    # Plot only state changes (local feature -- not emergent, see docstring)
+    plt.subplot(1, 3, 2)
     plt.stem(event_indices, amplitude_changes, linefmt="orange", markerfmt="o", basefmt="gray")
-    plt.title("Amplitude Changes (Emergent Events)")
+    plt.title("Amplitude Changes (Local)")
     plt.xlabel("Event Index")
     plt.ylabel("Change in Amplitude")
+    plt.grid(True)
+
+    # Plot the frequency spectrum (genuinely emergent -- needs the whole signal)
+    plt.subplot(1, 3, 3)
+    plt.stem(freqs, magnitude, linefmt="green", markerfmt="o", basefmt="gray")
+    plt.title("Frequency Spectrum (Emergent)")
+    plt.xlabel("Frequency (cycles/sample)")
+    plt.ylabel("Magnitude")
     plt.grid(True)
 
     plt.tight_layout()
