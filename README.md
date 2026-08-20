@@ -1,4 +1,4 @@
-# TheOne
+# The One
 
 ## The Whole is More Than the Sum of the Parts
 
