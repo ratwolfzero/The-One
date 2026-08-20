@@ -19,30 +19,19 @@ def generate_wave(custom_function, samples=100, x_range=(-1, 1)):
 
 def plot_wave_as_events(wave_data):
     """
-    Plot a waveform four ways: the raw sequence, its local rate of change,
-    its frequency spectrum, and a genuinely emergent modulation spectrum.
+    Plot a waveform four ways, treating the samples as a sequence of
+    discrete events (moments) rather than continuous time:
 
-    These panels get progressively less "local," which can look like a
-    march toward emergence. It isn't, and the fourth panel exists to draw
-    the real line:
+    1. The raw sequence of amplitudes.
+    2. Local differences between neighboring moments (invertible, no new
+       information).
+    3. Frequency spectrum — a linear transform that needs every moment,
+       yet remains a sum of independent terms.
+    4. Spectrum after multiplication by a carrier. The product introduces
+       sum/difference frequencies present in neither original spectrum.
 
-    - LOCAL: the diff panel. y[i] - y[i-1] touches a 2-sample window and is
-      exactly invertible via cumsum. No new information, just the same
-      signal re-expressed.
-    - GLOBAL, but still NOT emergent: the FFT panel. Each bin is a weighted
-      SUM over every sample (X[k] = sum_n x[n] * e^{-2pi*i*k*n/N}), so it
-      needs the whole signal to compute -- but summation is linear. Every
-      term in that sum is independently computable; nothing here requires
-      the samples to interact. "Needs the whole to compute" is a weaker
-      claim than "the whole exceeds the sum of its parts."
-    - ACTUALLY EMERGENT: the modulation panel. The wave is multiplied (not
-      added) by a carrier tone. Multiplication in time is convolution in
-      frequency, and it creates energy at sum/difference frequencies that
-      exist in NEITHER the wave's spectrum nor the carrier's spectrum
-      alone. That new content can't be decomposed into independent
-      per-sample contributions -- it only exists because the two signals
-      interacted. This is the one panel that actually earns "the whole is
-      more than the sum of the parts."
+    The panels illustrate three kinds of dependence among moments:
+    local, global-but-linear, and nonlinear interaction.
 
     Args:
         wave_data (np.ndarray): The wave values to plot.
@@ -51,14 +40,13 @@ def plot_wave_as_events(wave_data):
     event_indices = range(len(wave_data))  # Use sequential event indices
     amplitude_changes = np.diff(wave_data, prepend=wave_data[0])  # Local: 2-sample window
 
-    # FFT: global (needs every sample) but still linear -- see docstring
+    # FFT: global (needs every sample) but still linear
     spectrum = np.fft.rfft(wave_data)
     freqs = np.fft.rfftfreq(len(wave_data), d=1.0)  # cycles per sample
     magnitude = np.abs(spectrum)
 
-    # Modulation: multiply by a carrier at a quarter of the Nyquist rate.
-    # Sum/difference sidebands appear here that are in neither input's
-    # spectrum -- genuine emergence, not just a big sum.
+    # Modulation: multiply by a carrier at a quarter of the sampling rate.
+    # Sum/difference sidebands appear that are in neither input spectrum.
     carrier_cycles = max(1, len(wave_data) // 4)
     carrier = np.cos(2 * np.pi * carrier_cycles * n / len(wave_data))
     modulated = wave_data * carrier
@@ -75,7 +63,7 @@ def plot_wave_as_events(wave_data):
     plt.grid(True)
     plt.legend()
 
-    # Plot only state changes (local -- not emergent, see docstring)
+    # Plot only state changes (local)
     plt.subplot(1, 4, 2)
     plt.stem(event_indices, amplitude_changes, linefmt="orange", markerfmt="o", basefmt="gray")
     plt.title("Amplitude Changes (Local)")
@@ -83,7 +71,7 @@ def plot_wave_as_events(wave_data):
     plt.ylabel("Change in Amplitude")
     plt.grid(True)
 
-    # Plot the frequency spectrum (global, but linear -- not emergent, see docstring)
+    # Plot the frequency spectrum (global, linear)
     plt.subplot(1, 4, 3)
     plt.stem(freqs, magnitude, linefmt="green", markerfmt="o", basefmt="gray")
     plt.title("Frequency Spectrum (Global)")
@@ -91,10 +79,10 @@ def plot_wave_as_events(wave_data):
     plt.ylabel("Magnitude")
     plt.grid(True)
 
-    # Plot the modulated spectrum (genuinely emergent -- see docstring)
+    # Plot the modulated spectrum (nonlinear interaction)
     plt.subplot(1, 4, 4)
     plt.stem(freqs, modulated_spectrum, linefmt="red", markerfmt="o", basefmt="gray")
-    plt.title("Modulated Spectrum (Emergent)")
+    plt.title("Modulated Spectrum (Nonlinear)")
     plt.xlabel("Frequency (cycles/sample)")
     plt.ylabel("Magnitude")
     plt.grid(True)
@@ -178,4 +166,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
