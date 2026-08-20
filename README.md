@@ -49,3 +49,7 @@ $$\sin(2\pi f_0 n)\cos(2\pi f_c n) = \frac{1}{2}\sin\big(2\pi (f_0+f_c) n\big) +
 - **Nonlinear** — two sequences interact by multiplication; the result contains structure that belongs to neither sequence by itself.
 
 The point is not metaphysics. It is simply to make visible three different kinds of dependence that can exist among a sequence of moments.
+
+![Sine](TheOne1.png)
+![Parabola](TheOne2.png)
+![Cubix](TheOne3.png)
