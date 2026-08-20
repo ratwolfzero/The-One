@@ -19,32 +19,55 @@ def generate_wave(custom_function, samples=100, x_range=(-1, 1)):
 
 def plot_wave_as_events(wave_data):
     """
-    Plot a waveform three ways: the raw sequence, its local rate of change,
-    and its frequency spectrum.
+    Plot a waveform four ways: the raw sequence, its local rate of change,
+    its frequency spectrum, and a genuinely emergent modulation spectrum.
 
-    The diff panel is LOCAL -- each point is just y[i] - y[i-1], a 2-sample
-    window that's exactly invertible via cumsum, so it carries no information
-    the raw wave didn't already have. The FFT panel is GLOBAL: each frequency
-    bin is a weighted sum over every sample in the signal, so it can't be
-    computed from any subset of the wave. That's the panel that actually
-    earns "the whole is more than the sum of the parts" -- harmonic
-    structure shows up here that's invisible in any local view of the wave.
+    These panels get progressively less "local," which can look like a
+    march toward emergence. It isn't, and the fourth panel exists to draw
+    the real line:
+
+    - LOCAL: the diff panel. y[i] - y[i-1] touches a 2-sample window and is
+      exactly invertible via cumsum. No new information, just the same
+      signal re-expressed.
+    - GLOBAL, but still NOT emergent: the FFT panel. Each bin is a weighted
+      SUM over every sample (X[k] = sum_n x[n] * e^{-2pi*i*k*n/N}), so it
+      needs the whole signal to compute -- but summation is linear. Every
+      term in that sum is independently computable; nothing here requires
+      the samples to interact. "Needs the whole to compute" is a weaker
+      claim than "the whole exceeds the sum of its parts."
+    - ACTUALLY EMERGENT: the modulation panel. The wave is multiplied (not
+      added) by a carrier tone. Multiplication in time is convolution in
+      frequency, and it creates energy at sum/difference frequencies that
+      exist in NEITHER the wave's spectrum nor the carrier's spectrum
+      alone. That new content can't be decomposed into independent
+      per-sample contributions -- it only exists because the two signals
+      interacted. This is the one panel that actually earns "the whole is
+      more than the sum of the parts."
 
     Args:
         wave_data (np.ndarray): The wave values to plot.
     """
+    n = np.arange(len(wave_data))
     event_indices = range(len(wave_data))  # Use sequential event indices
     amplitude_changes = np.diff(wave_data, prepend=wave_data[0])  # Local: 2-sample window
 
-    # FFT: each bin depends on ALL samples at once -- a genuinely global computation
+    # FFT: global (needs every sample) but still linear -- see docstring
     spectrum = np.fft.rfft(wave_data)
     freqs = np.fft.rfftfreq(len(wave_data), d=1.0)  # cycles per sample
     magnitude = np.abs(spectrum)
 
-    plt.figure(figsize=(15, 5))
+    # Modulation: multiply by a carrier at a quarter of the Nyquist rate.
+    # Sum/difference sidebands appear here that are in neither input's
+    # spectrum -- genuine emergence, not just a big sum.
+    carrier_cycles = max(1, len(wave_data) // 4)
+    carrier = np.cos(2 * np.pi * carrier_cycles * n / len(wave_data))
+    modulated = wave_data * carrier
+    modulated_spectrum = np.abs(np.fft.rfft(modulated))
+
+    plt.figure(figsize=(20, 5))
 
     # Plot original wave with event indices
-    plt.subplot(1, 3, 1)
+    plt.subplot(1, 4, 1)
     plt.plot(event_indices, wave_data, label="Amplitude", color="blue")
     plt.title("Waveform as Event Sequence")
     plt.xlabel("Event Index")
@@ -52,18 +75,26 @@ def plot_wave_as_events(wave_data):
     plt.grid(True)
     plt.legend()
 
-    # Plot only state changes (local feature -- not emergent, see docstring)
-    plt.subplot(1, 3, 2)
+    # Plot only state changes (local -- not emergent, see docstring)
+    plt.subplot(1, 4, 2)
     plt.stem(event_indices, amplitude_changes, linefmt="orange", markerfmt="o", basefmt="gray")
     plt.title("Amplitude Changes (Local)")
     plt.xlabel("Event Index")
     plt.ylabel("Change in Amplitude")
     plt.grid(True)
 
-    # Plot the frequency spectrum (genuinely emergent -- needs the whole signal)
-    plt.subplot(1, 3, 3)
+    # Plot the frequency spectrum (global, but linear -- not emergent, see docstring)
+    plt.subplot(1, 4, 3)
     plt.stem(freqs, magnitude, linefmt="green", markerfmt="o", basefmt="gray")
-    plt.title("Frequency Spectrum (Emergent)")
+    plt.title("Frequency Spectrum (Global)")
+    plt.xlabel("Frequency (cycles/sample)")
+    plt.ylabel("Magnitude")
+    plt.grid(True)
+
+    # Plot the modulated spectrum (genuinely emergent -- see docstring)
+    plt.subplot(1, 4, 4)
+    plt.stem(freqs, modulated_spectrum, linefmt="red", markerfmt="o", basefmt="gray")
+    plt.title("Modulated Spectrum (Emergent)")
     plt.xlabel("Frequency (cycles/sample)")
     plt.ylabel("Magnitude")
     plt.grid(True)
