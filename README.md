@@ -1,4 +1,4 @@
-# The One: The Whole is More Than the Sum of the Parts
+# The One: The Whole is More Than the Sum of the Parts (currently under review fake/real emergence, comming soon... :-)
 
 ## Dor
 
