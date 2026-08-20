@@ -1,6 +1,6 @@
-# TheOne.py
+# TheOne
 
-## The One: The Whole is More Than the Sum of the Parts (currently under review fake/real emergence, comming soon... :-)
+## The Whole is More Than the Sum of the Parts
 
 ## Dor
 
@@ -9,6 +9,8 @@
 "the true beauty of time lies in its impermanence"
 
 Albom, Mitch. The Time Keeper. New York: Hyperion, 2012.
+
+---
 
 A wave generator/visualizer that doubles as a demo of three different senses in which "the whole" can relate to "the parts" — local, global, and genuinely emergent — plotted side by side instead of just asserted.
 
