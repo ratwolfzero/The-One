@@ -48,11 +48,11 @@ $$\sin(2\pi f_0 n)\cos(2\pi f_c n) = \frac{1}{2}\sin\big(2\pi (f_0+f_c) n\big) +
 - **Global (linear)** — relation that involves every moment, but only through addition.
 - **Nonlinear** — two sequences interact by multiplication; the result contains structure that belongs to neither sequence by itself.
 
+The point is not metaphysics. It is simply to make visible three different kinds of dependence that can exist among a sequence of moments.
+
 ## Beyond the panels
 
 The distinctions shown here are not only conceptual. The nonlinear case — new frequencies arising from multiplication — is the operating principle behind amplitude modulation, frequency mixers, lock-in amplifiers, ring modulators, and many forms of synchronous detection. Local operations and linear transforms rearrange existing information; multiplication can generate structure that neither input possesses on its own. The panels simply make that difference visible on a short sequence of moments.
-
-The point is not metaphysics. It is simply to make visible three different kinds of dependence that can exist among a sequence of moments.
 
 ![Sine](TheOne1.png)
 ![Parabola](TheOne2.png)
